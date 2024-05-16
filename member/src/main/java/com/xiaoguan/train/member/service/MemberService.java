@@ -1,8 +1,13 @@
 package com.xiaoguan.train.member.service;
 
+import cn.hutool.core.collection.CollUtil;
+import com.xiaoguan.train.member.domain.Member;
+import com.xiaoguan.train.member.domain.MemberExample;
 import com.xiaoguan.train.member.mapper.MemberMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * ClassName: MemberService
@@ -20,5 +25,24 @@ public class MemberService {
 
     public int count(){
         return Math.toIntExact(memberMapper.countByExample(null));
+    }
+
+    public long register(String mobile){
+        //1.创建一个条件
+        MemberExample memberExample = new MemberExample();
+        memberExample.createCriteria().andMobileEqualTo(mobile);
+        //2.根据条件进行查询
+        List<Member> list = memberMapper.selectByExample(memberExample);
+        if(CollUtil.isNotEmpty(list)){
+            //带验证码的注册可以用这种方式，有验证码，说明手机号是本人用，原来注册过的，就不需要保存了，直接数据库返回。
+            // 这个接口既可以是注册，也可以是登陆
+//            return list.get(0).getId();
+            throw new RuntimeException("手机号已注册");
+        }
+        Member member = new Member();
+        member.setId(System.currentTimeMillis());
+        member.setMobile(mobile);
+        memberMapper.insert(member);
+        return member.getId();
     }
 }

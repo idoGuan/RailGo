@@ -4,7 +4,7 @@ server:
     context-path: /member
 spring:
   datasource:
-    url: jdbc:mysql://rm-uf66o0e3fbbqaqk41wo.rwlb.rds.aliyuncs.com:3306/train_member
+    url: jdbc:mysql://rm-uf66o0e3fbbqaqk41wo.rwlb.rds.aliyuncs.com:3306/train_member?serverTimezone=Asia/Shanghai
     username: train_member
     password: Xiao_guan666
     driver-class-name: com.mysql.cj.jdbc.Driver

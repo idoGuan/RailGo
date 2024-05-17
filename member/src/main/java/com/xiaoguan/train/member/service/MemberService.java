@@ -1,6 +1,8 @@
 package com.xiaoguan.train.member.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.xiaoguan.train.common.exceprion.BusinessException;
+import com.xiaoguan.train.common.exceprion.BusinessExceptionEnum;
 import com.xiaoguan.train.member.domain.Member;
 import com.xiaoguan.train.member.domain.MemberExample;
 import com.xiaoguan.train.member.mapper.MemberMapper;
@@ -39,7 +41,7 @@ public class MemberService {
             //带验证码的注册可以用这种方式，有验证码，说明手机号是本人用，原来注册过的，就不需要保存了，直接数据库返回。
             // 这个接口既可以是注册，也可以是登陆
 //            return list.get(0).getId();
-            throw new RuntimeException("手机号已注册");
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
         Member member = new Member();
         member.setId(System.currentTimeMillis());

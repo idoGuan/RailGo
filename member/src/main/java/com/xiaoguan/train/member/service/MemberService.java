@@ -3,6 +3,7 @@ package com.xiaoguan.train.member.service;
 import cn.hutool.core.collection.CollUtil;
 import com.xiaoguan.train.common.exceprion.BusinessException;
 import com.xiaoguan.train.common.exceprion.BusinessExceptionEnum;
+import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.member.domain.Member;
 import com.xiaoguan.train.member.domain.MemberExample;
 import com.xiaoguan.train.member.mapper.MemberMapper;
@@ -44,7 +45,7 @@ public class MemberService {
             throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
         Member member = new Member();
-        member.setId(System.currentTimeMillis());
+        member.setId(SnowUtil.getSnowflakeNextId());
         member.setMobile(mobile);
         memberMapper.insert(member);
         return member.getId();

@@ -1,5 +1,7 @@
 package com.xiaoguan.train.member.req;
 
+import jakarta.validation.constraints.NotBlank;
+
 /**
  * ClassName: MemberRequestReq
  * Package: com.xiaoguan.train.member.req
@@ -10,6 +12,7 @@ package com.xiaoguan.train.member.req;
  * @Version 1.0
  */
 public class MemberRequestReq {
+    @NotBlank(message = "手机号不能为空")
     private String mobile;
 
     public String getMobile() {

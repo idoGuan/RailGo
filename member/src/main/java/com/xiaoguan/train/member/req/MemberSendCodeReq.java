@@ -1,6 +1,7 @@
 package com.xiaoguan.train.member.req;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * ClassName: MemberRequestReq
@@ -11,8 +12,9 @@ import jakarta.validation.constraints.NotBlank;
  * @Create 2024/5/17 7:40
  * @Version 1.0
  */
-public class MemberRequestReq {
+public class MemberSendCodeReq {
     @NotBlank(message = "手机号不能为空")
+    @Pattern(regexp = "^1\\d{10}$", message = "手机号码格式错误")
     private String mobile;
 
     public String getMobile() {
@@ -25,7 +27,7 @@ public class MemberRequestReq {
 
     @Override
     public String toString() {
-        return "MemberRequestReq{" +
+        return "MemberSendCodeReq{" +
                 "mobile='" + mobile + '\'' +
                 '}';
     }

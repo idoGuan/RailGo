@@ -23,4 +23,12 @@ public class BusinessException extends RuntimeException{
     public void setE(BusinessExceptionEnum e) {
         this.e = e;
     }
+
+    /**
+     * 对于自己定义的异常类，不写入堆栈信息，提高性能
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }

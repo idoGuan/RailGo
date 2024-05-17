@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotBlank;
  * @Version 1.0
  */
 public class MemberRequestReq {
-    @NotBlank(message = "手机号不能为空")
+    @NotBlank(message = "【手机号】不能为空")
     private String mobile;
 
     public String getMobile() {

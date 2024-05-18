@@ -2,6 +2,7 @@ package com.xiaoguan.train.member.controller;
 
 import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.resp.CommonResp;
+import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.member.req.PassengerQueryReq;
 import com.xiaoguan.train.member.req.PassengerSaveReq;
 import com.xiaoguan.train.member.resp.PassengerQueryResp;
@@ -9,8 +10,6 @@ import com.xiaoguan.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * ClassName: TestController
@@ -35,9 +34,9 @@ public class PassengerController {
     }
 
     @GetMapping("/query-list")
-    public CommonResp<List<PassengerQueryResp>> save(@Valid PassengerQueryReq req){
+    public CommonResp<PageResp<PassengerQueryResp>> save(@Valid PassengerQueryReq req){
         req.setMemberId(LoginMemberContext.getId());
-        List<PassengerQueryResp> passengerQueryRespList = passengerService.queryList(req);
+        PageResp<PassengerQueryResp> passengerQueryRespList = passengerService.queryList(req);
         return new CommonResp<>(passengerQueryRespList);
     }
 }

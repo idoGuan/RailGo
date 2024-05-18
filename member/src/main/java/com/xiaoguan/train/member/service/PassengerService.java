@@ -52,7 +52,7 @@ public class PassengerService {
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
         //分页代码尽量与查询操作放在一起，防止两者中间出现别的查询操作，出现错误
-        PageHelper.startPage(1, 2);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
         return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
     }

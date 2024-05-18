@@ -1,6 +1,8 @@
 package com.xiaoguan.train.member.req;
 
-public class PassengerQueryReq {
+import com.xiaoguan.train.common.req.PageReq;
+
+public class PassengerQueryReq extends PageReq {
 
     private Long memberId;
 

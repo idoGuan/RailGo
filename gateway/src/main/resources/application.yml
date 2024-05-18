@@ -1,14 +1,20 @@
 server:
   port: 8000
+
 spring:
   cloud:
     gateway:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
             max-age: 3600
+      routes:
+        - id: member
+          uri: http://127.0.0.1:8001
+          predicates:
+            - Path=/member/**
 

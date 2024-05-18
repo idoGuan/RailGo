@@ -2,13 +2,19 @@ package com.xiaoguan.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjUtil;
 import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.member.domain.Passenger;
+import com.xiaoguan.train.member.domain.PassengerExample;
 import com.xiaoguan.train.member.mapper.PassengerMapper;
+import com.xiaoguan.train.member.req.PassengerQueryReq;
 import com.xiaoguan.train.member.req.PassengerSaveReq;
+import com.xiaoguan.train.member.resp.PassengerQueryResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * ClassName: PassengerService
@@ -35,5 +41,16 @@ public class PassengerService {
         passenger.setCreateTime(now);
         passenger.setUpdateTime(now);
         passengerMapper.insert(passenger);
+    }
+
+    public List<PassengerQueryResp> queryList(PassengerQueryReq req){
+        PassengerExample passengerExample = new PassengerExample();
+        //如果有多个条件变量的话，要在同一个criteria上面添加and条件，否则的话只有最后的criteria条件生效
+        PassengerExample.Criteria criteria = passengerExample.createCriteria();
+        if(ObjUtil.isNotNull(req.getMemberId())){
+            criteria.andMemberIdEqualTo(req.getMemberId());
+        }
+        List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
+        return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
     }
 }

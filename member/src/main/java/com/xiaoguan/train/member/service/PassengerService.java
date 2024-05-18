@@ -3,6 +3,7 @@ package com.xiaoguan.train.member.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjUtil;
+import com.github.pagehelper.PageHelper;
 import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.member.domain.Passenger;
@@ -50,6 +51,8 @@ public class PassengerService {
         if(ObjUtil.isNotNull(req.getMemberId())){
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
+        //分页代码尽量与查询操作放在一起，防止两者中间出现别的查询操作，出现错误
+        PageHelper.startPage(1, 2);
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
         return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
     }

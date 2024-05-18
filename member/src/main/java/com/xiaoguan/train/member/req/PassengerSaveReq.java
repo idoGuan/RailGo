@@ -1,5 +1,6 @@
 package com.xiaoguan.train.member.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
@@ -15,8 +16,10 @@ public class PassengerSaveReq {
     @NotBlank(message = "【乘客类型】不能为空")
     private String type;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GTM+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GTM+8")
     private Date updateTime;
 
     public Long getId() {

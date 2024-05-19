@@ -2,23 +2,25 @@ package com.xiaoguan.train.generator.server;
 
 
 import com.xiaoguan.train.generator.util.FreemarkerUtil;
+import freemarker.template.TemplateException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ServerGenerator {
-    static String servicePath = "[module]/src/main/java/com/xiaoguan/train/[module]/service/";
+    static String serverPath = "[module]/src/main/java/com/xiaoguan/train/[module]/";
     static String pomPath = "generator/pom.xml";
 
     static String module = "";
 
     static {
-        new File(servicePath).mkdirs();
+        new File(serverPath).mkdirs();
     }
 
     public static void main(String[] args) throws Exception {
@@ -28,9 +30,9 @@ public class ServerGenerator {
         // 比如generator-config-member.xml，得到module = member
         module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
         System.out.println("module: " + module);
-        servicePath = servicePath.replace("[module]", module);
-        new File(servicePath).mkdirs();
-        System.out.println("servicePath: " + servicePath);
+        serverPath = serverPath.replace("[module]", module);
+        new File(serverPath).mkdirs();
+        System.out.println("servicePath: " + serverPath);
 
         // 读取table节点
         Document document = new SAXReader().read("generator/" + generatorPath);
@@ -65,8 +67,18 @@ public class ServerGenerator {
         System.out.println("组装参数：" + param);
 
 
-        FreemarkerUtil.initConfig("service.ftl");
-        FreemarkerUtil.generator(servicePath + Domain + "Service.java", param);
+        gen(Domain, param, "service");
+        gen(Domain, param, "controller");
+    }
+
+    private static void gen(String Domain, Map<String, Object> param, String target) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig(target + ".ftl");
+        String toPath = serverPath + target + "/";
+        new File(toPath).mkdirs();
+        String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
+        String fileName = toPath + Domain + Target + ".java";
+        System.out.println("开始生成：" + fileName);
+        FreemarkerUtil.generator(fileName, param);
     }
 
 

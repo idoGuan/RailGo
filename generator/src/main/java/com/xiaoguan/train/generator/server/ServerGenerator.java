@@ -20,7 +20,15 @@ public class ServerGenerator {
 
     public static void main(String[] args) throws Exception {
 
-        getGeneratorPath();
+        String generatorPath = getGeneratorPath();
+
+        Document document = new SAXReader().read("generator/" + generatorPath);
+        Node table = document.selectSingleNode("//table");
+        System.out.println(table);
+        Node tableName = table.selectSingleNode("@tableName");
+        Node domainObjectName = table.selectSingleNode("@domainObjectName");
+        System.out.println(tableName.getText() + "/" + domainObjectName.getText());
+
 //        FreemarkerUtil.initConfig("test.ftl");
 //        HashMap<String, Object> param = new HashMap<>();
 //        param.put("domain", "Test");

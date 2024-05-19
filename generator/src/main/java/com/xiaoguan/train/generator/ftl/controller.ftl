@@ -1,12 +1,12 @@
-package com.xiaoguan.train.member.controller;
+package com.xiaoguan.train.${module}.controller;
 
 import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.resp.CommonResp;
 import com.xiaoguan.train.common.resp.PageResp;
-import com.xiaoguan.train.member.req.${Domain}QueryReq;
-import com.xiaoguan.train.member.req.${Domain}SaveReq;
-import com.xiaoguan.train.member.resp.${Domain}QueryResp;
-import com.xiaoguan.train.member.service.${Domain}Service;
+import com.xiaoguan.train.${module}.req.${Domain}QueryReq;
+import com.xiaoguan.train.${module}.req.${Domain}SaveReq;
+import com.xiaoguan.train.${module}.resp.${Domain}QueryResp;
+import com.xiaoguan.train.${module}.service.${Domain}Service;
 import jakarta.annotation.Resource;
 import jakarta.validation.Configuration;
 import jakarta.validation.Valid;

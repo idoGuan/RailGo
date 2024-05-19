@@ -1,4 +1,4 @@
-package com.xiaoguan.train.member.service;
+package com.xiaoguan.train.${module}.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
@@ -8,12 +8,12 @@ import com.github.pagehelper.PageInfo;
 import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.common.util.SnowUtil;
-import com.xiaoguan.train.member.domain.${Domain};
-import com.xiaoguan.train.member.domain.${Domain}Example;
-import com.xiaoguan.train.member.mapper.${Domain}Mapper;
-import com.xiaoguan.train.member.req.${Domain}QueryReq;
-import com.xiaoguan.train.member.req.${Domain}SaveReq;
-import com.xiaoguan.train.member.resp.${Domain}QueryResp;
+import com.xiaoguan.train.${module}.domain.${Domain};
+import com.xiaoguan.train.${module}.domain.${Domain}Example;
+import com.xiaoguan.train.${module}.mapper.${Domain}Mapper;
+import com.xiaoguan.train.${module}.req.${Domain}QueryReq;
+import com.xiaoguan.train.${module}.req.${Domain}SaveReq;
+import com.xiaoguan.train.${module}.resp.${Domain}QueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * ClassName: ${Domain}Service
- * Package: com.xiaoguan.train.member.service
+ * Package: com.xiaoguan.train.${module}.service
  * Description:
  *
  * @Author 小管不要跑

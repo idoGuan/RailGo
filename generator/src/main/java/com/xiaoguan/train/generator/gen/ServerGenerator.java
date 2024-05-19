@@ -1,4 +1,4 @@
-package com.xiaoguan.train.generator.server;
+package com.xiaoguan.train.generator.gen;
 
 
 import com.xiaoguan.train.generator.util.DbUtil;
@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class ServerGenerator {
+    static boolean readOnly = false;
+    static String vuePath = "admin/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/xiaoguan/train/[module]/";
     static String pomPath = "generator/pom.xml";
 
@@ -76,7 +78,7 @@ public class ServerGenerator {
         param.put("tableNameCn", tableNameCn);
         param.put("fieldList", fieldList);
         param.put("typeSet", typeSet);
-//        param.put("readOnly", readOnly);
+        param.put("readOnly", readOnly);
         System.out.println("组装参数：" + param);
 
 
@@ -84,8 +86,10 @@ public class ServerGenerator {
 //        gen(Domain, param, "service", "service");
 //        gen(Domain, param, "controller", "controller");
 //        gen(Domain, param, "req", "saveReq");
-        gen(Domain, param, "req", "queryReq");
-        gen(Domain, param, "resp", "queryResp");
+//        gen(Domain, param, "req", "queryReq");
+//        gen(Domain, param, "resp", "queryResp");
+
+        genVue(do_main, param);
 
     }
 
@@ -98,6 +102,15 @@ public class ServerGenerator {
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }
+
+    private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig("vue.ftl");
+        new File(vuePath + module).mkdirs();
+        String fileName = vuePath + module + "/" + do_main + ".vue";
+        System.out.println("开始生成：" + fileName);
+        FreemarkerUtil.generator(fileName, param);
+    }
+
 
 
     private static String getGeneratorPath() throws DocumentException {

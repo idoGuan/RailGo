@@ -5,7 +5,6 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.${module}.domain.${Domain};
@@ -44,7 +43,6 @@ public class ${Domain}Service {
         DateTime now = DateTime.now();
         ${Domain} ${domain} = BeanUtil.copyProperties(req, ${Domain}.class);
         if (ObjUtil.isNull(${domain}.getId())) {
-            ${domain}.setMemberId(LoginMemberContext.getId());
             ${domain}.setId(SnowUtil.getSnowflakeNextId());
             ${domain}.setCreateTime(now);
             ${domain}.setUpdateTime(now);
@@ -59,9 +57,7 @@ public class ${Domain}Service {
         ${Domain}Example ${domain}Example = new ${Domain}Example();
         //如果有多个条件变量的话，要在同一个criteria上面添加and条件，否则的话只有最后的criteria条件生效
         ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
-        if (ObjUtil.isNotNull(req.getMemberId())) {
-            criteria.andMemberIdEqualTo(req.getMemberId());
-        }
+
         LOG.info("查询页码，{}", req.getPage());
         LOG.info("每页条数，{}", req.getSize());
         //分页代码尽量与查询操作放在一起，防止两者中间出现别的查询操作，出现错误

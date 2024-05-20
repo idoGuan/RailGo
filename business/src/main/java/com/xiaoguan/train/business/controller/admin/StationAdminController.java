@@ -1,4 +1,4 @@
-package com.xiaoguan.train.business.controller;
+package com.xiaoguan.train.business.controller.admin;
 
 import com.xiaoguan.train.business.req.StationQueryReq;
 import com.xiaoguan.train.business.req.StationSaveReq;
@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
  * @Version 1.0
  */
 @RestController
-@RequestMapping("/station")
-public class StationController {
+@RequestMapping("/admin/station")
+public class StationAdminController {
 
     @Resource
     private StationService stationService;

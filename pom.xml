@@ -8,7 +8,7 @@
         <module>common</module>
         <module>gateway</module>
         <module>generator</module>
-        <module>businesss</module>
+        <module>business</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

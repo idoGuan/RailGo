@@ -17,7 +17,10 @@
     </properties>
 
     <dependencies>
-        <!--        引入common中的依赖，这样member模块中就不需要引入common已有的依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.xiaoguan</groupId>
             <artifactId>common</artifactId>

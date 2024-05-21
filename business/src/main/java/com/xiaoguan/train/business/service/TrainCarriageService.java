@@ -5,14 +5,14 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.common.resp.PageResp;
-import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.business.domain.TrainCarriage;
 import com.xiaoguan.train.business.domain.TrainCarriageExample;
 import com.xiaoguan.train.business.mapper.TrainCarriageMapper;
 import com.xiaoguan.train.business.req.TrainCarriageQueryReq;
 import com.xiaoguan.train.business.req.TrainCarriageSaveReq;
 import com.xiaoguan.train.business.resp.TrainCarriageQueryResp;
+import com.xiaoguan.train.common.resp.PageResp;
+import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +44,11 @@ public class TrainCarriageService {
 
     public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-        trainCarriageExample.setOrderByClause("id desc");
+        trainCarriageExample.setOrderByClause("train_code asc, `index` asc");
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
-
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());

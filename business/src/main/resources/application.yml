@@ -15,5 +15,5 @@ logging:
     com:
       xiaoguan:
         train:
-          member:
+          business:
             mapper: trace

@@ -10,6 +10,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * ClassName: TestController
  * Package: com.xiaoguan.train.station.controller
@@ -42,5 +44,11 @@ public class StationAdminController {
     public CommonResp<Object> delete(@PathVariable Long id){
         stationService.delete(id);
         return new CommonResp<>();
+    }
+
+    @GetMapping("/query-all")
+    public CommonResp<List<StationQueryResp>> queryAll(){
+        List<StationQueryResp> stationQueryRespList = stationService.queryAll();
+        return new CommonResp<>(stationQueryRespList);
     }
 }

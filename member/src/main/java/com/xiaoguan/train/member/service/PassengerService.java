@@ -57,6 +57,7 @@ public class PassengerService {
 
     public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req) {
         PassengerExample passengerExample = new PassengerExample();
+        passengerExample.setOrderByClause("id desc");
         //如果有多个条件变量的话，要在同一个criteria上面添加and条件，否则的话只有最后的criteria条件生效
         PassengerExample.Criteria criteria = passengerExample.createCriteria();
         if (ObjUtil.isNotNull(req.getMemberId())) {

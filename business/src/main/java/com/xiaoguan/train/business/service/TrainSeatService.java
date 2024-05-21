@@ -2,7 +2,7 @@ package com.xiaoguan.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xiaoguan.train.common.resp.PageResp;
@@ -20,29 +20,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * ClassName: TrainSeatService
- * Package: com.xiaoguan.train.business.service
- * Description:
- *
- * @Author 小管不要跑
- * @Create 2024/5/18 12:57
- * @Version 1.0
- */
 @Service
 public class TrainSeatService {
 
-    public static final Logger LOG = LoggerFactory.getLogger(TrainSeatService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TrainSeatService.class);
 
     @Resource
     private TrainSeatMapper trainSeatMapper;
 
-    //这里不需要返回值，因为在后续界面操作时，保存后界面会刷新列表，查询数据，不需要返回保存成功后的数据
-    //因此这里新增数据只需要将数据保存到数据库就行（有返回值也行，新建一个TrainSeatSaveResp）
     public void save(TrainSeatSaveReq req) {
         DateTime now = DateTime.now();
         TrainSeat trainSeat = BeanUtil.copyProperties(req, TrainSeat.class);
-        if (ObjUtil.isNull(trainSeat.getId())) {
+        if (ObjectUtil.isNull(trainSeat.getId())) {
             trainSeat.setId(SnowUtil.getSnowflakeNextId());
             trainSeat.setCreateTime(now);
             trainSeat.setUpdateTime(now);
@@ -55,26 +44,24 @@ public class TrainSeatService {
 
     public PageResp<TrainSeatQueryResp> queryList(TrainSeatQueryReq req) {
         TrainSeatExample trainSeatExample = new TrainSeatExample();
-        //如果有多个条件变量的话，要在同一个criteria上面添加and条件，否则的话只有最后的criteria条件生效
+        trainSeatExample.setOrderByClause("id desc");
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
 
-        LOG.info("查询页码，{}", req.getPage());
-        LOG.info("每页条数，{}", req.getSize());
-        //分页代码尽量与查询操作放在一起，防止两者中间出现别的查询操作，出现错误
+        LOG.info("查询页码：{}", req.getPage());
+        LOG.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());
         List<TrainSeat> trainSeatList = trainSeatMapper.selectByExample(trainSeatExample);
 
         PageInfo<TrainSeat> pageInfo = new PageInfo<>(trainSeatList);
-        LOG.info("总行数，{}", pageInfo.getTotal());
-        LOG.info("总页数，{}", pageInfo.getPages());
-
+        LOG.info("总行数：{}", pageInfo.getTotal());
+        LOG.info("总页数：{}", pageInfo.getPages());
 
         List<TrainSeatQueryResp> list = BeanUtil.copyToList(trainSeatList, TrainSeatQueryResp.class);
+
         PageResp<TrainSeatQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
         return pageResp;
-
     }
 
     public void delete(Long id) {

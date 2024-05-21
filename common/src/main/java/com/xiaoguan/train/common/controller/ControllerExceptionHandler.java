@@ -10,7 +10,7 @@ package com.xiaoguan.train.common.controller;
  * @Version 1.0
  */
 
-import com.xiaoguan.train.common.exceprion.BusinessException;
+import com.xiaoguan.train.common.exception.BusinessException;
 import com.xiaoguan.train.common.resp.CommonResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

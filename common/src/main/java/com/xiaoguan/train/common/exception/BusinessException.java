@@ -1,8 +1,8 @@
-package com.xiaoguan.train.common.exceprion;
+package com.xiaoguan.train.common.exception;
 
 /**
  * ClassName: BusinessException
- * Package: com.xiaoguan.train.common.exceprion
+ * Package: com.xiaoguan.train.common.exception
  * Description:
  *
  * @Author 小管不要跑

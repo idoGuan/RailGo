@@ -1,17 +1,16 @@
 package com.xiaoguan.train.business.controller.admin;
 
-import com.xiaoguan.train.common.context.LoginMemberContext;
-import com.xiaoguan.train.common.resp.CommonResp;
-import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.business.req.TrainQueryReq;
 import com.xiaoguan.train.business.req.TrainSaveReq;
 import com.xiaoguan.train.business.resp.TrainQueryResp;
 import com.xiaoguan.train.business.service.TrainService;
+import com.xiaoguan.train.common.resp.CommonResp;
+import com.xiaoguan.train.common.resp.PageResp;
 import jakarta.annotation.Resource;
-import jakarta.validation.Configuration;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ClassName: TestController
@@ -45,5 +44,11 @@ public class TrainAdminController {
     public CommonResp<Object> delete(@PathVariable Long id){
         trainService.delete(id);
         return new CommonResp<>();
+    }
+
+    @GetMapping("/query-all")
+    public CommonResp<List<TrainQueryResp>> queryAll(){
+        List<TrainQueryResp> trainQueryRespList = trainService.queryAll();
+        return new CommonResp<>(trainQueryRespList);
     }
 }

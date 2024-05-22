@@ -2,9 +2,9 @@ POST http://localhost:8000/batch/admin/job/add
 Content-Type: application/json
 
 {
-  "name": "com.xiaoguan.train.batch.job.TestJob",
+  "name": "com.xiaoguan.train.batch.job.DailyTrainJob",
   "jobGroupName": "default",
-  "cronExpression": "*/2 * * * * ?",
+  "cronExpression": "*/5 * * * * ?",
   "desc": "test job"
 }
 
@@ -18,7 +18,7 @@ POST http://localhost:8000/batch/admin/job/pause
 Content-Type: application/json
 
 {
-  "name": "com.xiaoguan.train.batch.job.TestJob",
+  "name": "com.xiaoguan.train.batch.job.DailyTrainJob",
   "jobGroupName": "default"
 }
 
@@ -28,7 +28,7 @@ POST http://localhost:8000/batch/admin/job/resume
 Content-Type: application/json
 
 {
-  "name": "com.xiaoguan.train.batch.job.TestJob",
+  "name": "com.xiaoguan.train.batch.job.DailyTrainJob",
   "jobGroupName": "default"
 }
 

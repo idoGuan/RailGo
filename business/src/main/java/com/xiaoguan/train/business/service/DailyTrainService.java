@@ -5,14 +5,14 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.common.resp.PageResp;
-import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.business.domain.DailyTrain;
 import com.xiaoguan.train.business.domain.DailyTrainExample;
 import com.xiaoguan.train.business.mapper.DailyTrainMapper;
 import com.xiaoguan.train.business.req.DailyTrainQueryReq;
 import com.xiaoguan.train.business.req.DailyTrainSaveReq;
 import com.xiaoguan.train.business.resp.DailyTrainQueryResp;
+import com.xiaoguan.train.common.resp.PageResp;
+import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +44,14 @@ public class DailyTrainService {
 
     public PageResp<DailyTrainQueryResp> queryList(DailyTrainQueryReq req) {
         DailyTrainExample dailyTrainExample = new DailyTrainExample();
-        dailyTrainExample.setOrderByClause("id desc");
+        dailyTrainExample.setOrderByClause("date desc, code asc");
         DailyTrainExample.Criteria criteria = dailyTrainExample.createCriteria();
+        if(ObjectUtil.isNotNull(req.getDate())){
+            criteria.andDateEqualTo(req.getDate());
+        }
+        if(ObjectUtil.isNotEmpty(req.getCode())){
+            criteria.andCodeEqualTo(req.getCode());
+        }
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());

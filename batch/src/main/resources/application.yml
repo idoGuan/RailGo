@@ -8,6 +8,8 @@ spring:
     username: train_batch
     password: abc123
     driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: batch
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
 logging:

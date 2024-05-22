@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /business
 spring:
+  application:
+    name: business
   datasource:
     url: jdbc:mysql://localhost:3306/train_business?serverTimezone=Asia/Shanghai
     username: train_business

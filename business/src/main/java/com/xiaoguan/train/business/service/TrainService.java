@@ -31,6 +31,7 @@ public class TrainService {
     public void save(TrainSaveReq req) {
         DateTime now = DateTime.now();
         Train train = BeanUtil.copyProperties(req, Train.class);
+        //如果主键不为空，则为修改操作，如果主键为空则是插入操作
         if (ObjectUtil.isNull(train.getId())) {
             train.setId(SnowUtil.getSnowflakeNextId());
             train.setCreateTime(now);

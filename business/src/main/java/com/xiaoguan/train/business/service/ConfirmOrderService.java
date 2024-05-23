@@ -11,7 +11,7 @@ import com.xiaoguan.train.business.domain.ConfirmOrder;
 import com.xiaoguan.train.business.domain.ConfirmOrderExample;
 import com.xiaoguan.train.business.mapper.ConfirmOrderMapper;
 import com.xiaoguan.train.business.req.ConfirmOrderQueryReq;
-import com.xiaoguan.train.business.req.ConfirmOrderSaveReq;
+import com.xiaoguan.train.business.req.ConfirmOrderDoReq;
 import com.xiaoguan.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class ConfirmOrderService {
     @Resource
     private ConfirmOrderMapper confirmOrderMapper;
 
-    public void save(ConfirmOrderSaveReq req) {
+    public void save(ConfirmOrderDoReq req) {
         DateTime now = DateTime.now();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         if (ObjectUtil.isNull(confirmOrder.getId())) {
@@ -66,5 +66,28 @@ public class ConfirmOrderService {
 
     public void delete(Long id) {
         confirmOrderMapper.deleteByPrimaryKey(id);
+    }
+
+    public void doConfirm(ConfirmOrderDoReq req) {
+        //省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，ticket条数>0，同乘客同车次是否已经买过
+
+        //保存确认订单，状态初识
+
+        //查出余票记录，需要得到真实的库存
+
+        //扣减余票数量，并判断余票是否足够（这里是预扣减，在Java类里扣减，不能直接更新到数据库
+
+        //选座
+
+            //一个车厢一个车厢的获取座位数据
+
+            //挑选符合条件的座位，如果这个车厢不满足，则进入下一个车厢（多个选座应该在同一个车厢）
+
+        // 选中座位后事务处理:
+
+            //修改座位表售卖情况sell
+            //修改余票详情表余票
+            //为会员增加购票记录
+            //更新确认订单为成功
     }
 }

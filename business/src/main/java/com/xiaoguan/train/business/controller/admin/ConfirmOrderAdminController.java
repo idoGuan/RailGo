@@ -1,16 +1,13 @@
 package com.xiaoguan.train.business.controller.admin;
 
-import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.resp.CommonResp;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.business.req.ConfirmOrderQueryReq;
-import com.xiaoguan.train.business.req.ConfirmOrderSaveReq;
+import com.xiaoguan.train.business.req.ConfirmOrderDoReq;
 import com.xiaoguan.train.business.resp.ConfirmOrderQueryResp;
 import com.xiaoguan.train.business.service.ConfirmOrderService;
 import jakarta.annotation.Resource;
-import jakarta.validation.Configuration;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +27,7 @@ public class ConfirmOrderAdminController {
     private ConfirmOrderService confirmOrderService;
 
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody ConfirmOrderSaveReq req){
+    public CommonResp<Object> save(@Valid @RequestBody ConfirmOrderDoReq req){
         confirmOrderService.save(req);
         return new CommonResp<>();
     }

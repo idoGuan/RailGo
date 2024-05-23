@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping(value = "/admin/job")
 public class JobController {
 
-    private static Logger LOG = LoggerFactory.getLogger(JobController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobController.class);
 
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;

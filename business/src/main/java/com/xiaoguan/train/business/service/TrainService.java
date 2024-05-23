@@ -70,9 +70,13 @@ public class TrainService {
     }
 
     public List<TrainQueryResp> queryAll() {
-        TrainExample trainExample = new TrainExample();
-        trainExample.setOrderByClause("name_pinyin asc");
-        List<Train> trainList = trainMapper.selectByExample(trainExample);
+        List<Train> trainList = selectAll();
         return BeanUtil.copyToList(trainList, TrainQueryResp.class);
+    }
+
+    public List<Train> selectAll() {
+        TrainExample trainExample = new TrainExample();
+//        trainExample.setOrderByClause("name_pinyin asc");
+        return trainMapper.selectByExample(trainExample);
     }
 }

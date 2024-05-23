@@ -14,7 +14,9 @@ public enum BusinessExceptionEnum {
     MEMBER_MOBILE_NOT_EXIST("请先获取短信验证码"),
     MEMBER_MOBILE_CODE_ERROR("短信验证码错误"),
     BUSINESS_TRAIN_STATION_NAME_UNIQUE_ERROR("同车次站名已存在"),
-    BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR("同车次厢号已存在");
+    BUSINESS_TRAIN_STATION_INDEX_UNIQUE_ERROR("同车次厢号已存在"),
+
+    CONFIRM_ORDER_TICKET_COUNT_ERROR("余票不足");
 
     private String desc;
 

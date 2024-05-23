@@ -8,10 +8,10 @@ import com.xiaoguan.train.member.req.PassengerSaveReq;
 import com.xiaoguan.train.member.resp.PassengerQueryResp;
 import com.xiaoguan.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
-import jakarta.validation.Configuration;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * ClassName: TestController
@@ -46,5 +46,10 @@ public class PassengerController {
     public CommonResp<Object> delete(@PathVariable Long id){
         passengerService.delete(id);
         return new CommonResp<>();
+    }
+
+    @GetMapping("/query-mine")
+    public CommonResp<List<PassengerQueryResp>> queryMine(@Valid PassengerQueryReq req){
+        return new CommonResp<>(passengerService.queryMine());
     }
 }

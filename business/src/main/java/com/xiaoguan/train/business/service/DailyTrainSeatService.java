@@ -8,17 +8,21 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.business.domain.*;
-import com.xiaoguan.train.common.resp.PageResp;
-import com.xiaoguan.train.common.util.SnowUtil;
+import com.xiaoguan.train.business.domain.DailyTrainSeat;
+import com.xiaoguan.train.business.domain.DailyTrainSeatExample;
+import com.xiaoguan.train.business.domain.TrainSeat;
+import com.xiaoguan.train.business.domain.TrainStation;
 import com.xiaoguan.train.business.mapper.DailyTrainSeatMapper;
 import com.xiaoguan.train.business.req.DailyTrainSeatQueryReq;
 import com.xiaoguan.train.business.req.DailyTrainSeatSaveReq;
 import com.xiaoguan.train.business.resp.DailyTrainSeatQueryResp;
+import com.xiaoguan.train.common.resp.PageResp;
+import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -80,6 +84,7 @@ public class DailyTrainSeatService {
         dailyTrainSeatMapper.deleteByPrimaryKey(id);
     }
 
+    @Transactional
     public void genDaily(Date date, String trainCode){
         LOG.info("生成日期【{}】车次【{}】的座位信息开始" , DateUtil.formatDate(date), trainCode);
 

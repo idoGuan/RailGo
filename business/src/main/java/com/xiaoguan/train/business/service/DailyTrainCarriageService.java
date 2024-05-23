@@ -7,17 +7,20 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.business.domain.*;
-import com.xiaoguan.train.common.resp.PageResp;
-import com.xiaoguan.train.common.util.SnowUtil;
+import com.xiaoguan.train.business.domain.DailyTrainCarriage;
+import com.xiaoguan.train.business.domain.DailyTrainCarriageExample;
+import com.xiaoguan.train.business.domain.TrainCarriage;
 import com.xiaoguan.train.business.mapper.DailyTrainCarriageMapper;
 import com.xiaoguan.train.business.req.DailyTrainCarriageQueryReq;
 import com.xiaoguan.train.business.req.DailyTrainCarriageSaveReq;
 import com.xiaoguan.train.business.resp.DailyTrainCarriageQueryResp;
+import com.xiaoguan.train.common.resp.PageResp;
+import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -80,6 +83,7 @@ public class DailyTrainCarriageService {
         dailyTrainCarriageMapper.deleteByPrimaryKey(id);
     }
 
+    @Transactional
     public void genDaily(Date date, String trainCode){
         LOG.info("生成日期【{}】车次【{}】的车厢信息开始" , DateUtil.formatDate(date), trainCode);
 

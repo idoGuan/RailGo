@@ -1,7 +1,9 @@
 package com.xiaoguan.train.business.service;
 
 import com.xiaoguan.train.business.domain.DailyTrainSeat;
+import com.xiaoguan.train.business.domain.DailyTrainTicket;
 import com.xiaoguan.train.business.mapper.DailyTrainSeatMapper;
+import com.xiaoguan.train.business.mapper.cust.DailyTrainTicketMapperCust;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,9 @@ public class AfterConfirmOrderService {
     @Resource
     private DailyTrainSeatMapper dailyTrainSeatMapper;
 
+    @Resource
+    private DailyTrainTicketMapperCust dailyTrainTicketMapperCust;
+
     /**
      * 选中座位后事务处理:
      *  修改座位表售卖情况sell
@@ -27,13 +32,60 @@ public class AfterConfirmOrderService {
      *  更新确认订单为成功
      */
     @Transactional
-    public void afterDoConfirm(List<DailyTrainSeat> finalSeatList) {
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList) {
         for (DailyTrainSeat dailyTrainSeat : finalSeatList) {
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
             seatForUpdate.setId(dailyTrainSeat.getId());
             seatForUpdate.setSell(dailyTrainSeat.getSell());
             seatForUpdate.setUpdateTime(new Date());
             dailyTrainSeatMapper.updateByPrimaryKeySelective(seatForUpdate);
+
+            //计算这个站卖出去后，影响哪些站的余票库存
+            //参照2-3节 如何保证不超卖、不少卖，还要能承受高并发 10：30左右
+            //影响的库存：本次选座之前没卖过票的，和本次购买的区间有交集的区间
+            //假设10个站，本次买4~7站
+            //原售：0 0 1 0 0 0 0 0 1
+            //购买：0 0 0 0 1 1 1 0 0
+            //新售：0 0 1 0 1 1 1 0 1
+            //影响：X X X 1 1 1 1 1 X
+            //如：这里不会影响第一站到第七站之间的售票情况，因为第三站之前已经买过了
+            //startIndex = 4
+            //endIndex = 7
+            //minStartIndex = startIndex - 往前碰到的最后一个0
+            //maxStartIndex = endIndex - 1
+            //minEndIndex = startIndex + 1
+            //maxEndIndex = endIndex + 往后碰到的最后一个0
+            Integer startIndex = dailyTrainTicket.getStartIndex();
+            Integer endIndex = dailyTrainTicket.getEndIndex();
+            char[] chars = seatForUpdate.getSell().toCharArray();
+            Integer maxStartIndex = endIndex - 1;
+            Integer minEndIndex = startIndex + 1;
+            Integer minStartIndex = 0;
+            for(int i = startIndex - 1; i >= 0; i--){
+                char c = chars[i];
+                if(c == '1'){
+                    minEndIndex = i + 1;
+                    break;
+                }
+            }
+            LOG.info("影响的出发站区间：" + minStartIndex + "-" + maxStartIndex);
+            Integer maxEndIndex = seatForUpdate.getSell().length();
+            for (int i = endIndex; i < seatForUpdate.getSell().length(); i++) {
+                char c = chars[i];
+                if(c == '1'){
+                    maxEndIndex = i;
+                    break;
+                }
+            }
+            LOG.info("影响的到达站区间：" + minEndIndex + "-" + maxEndIndex);
+            dailyTrainTicketMapperCust.updateCountBySell(
+                    dailyTrainSeat.getDate(),
+                    dailyTrainSeat.getTrainCode(),
+                    dailyTrainSeat.getSeatType(),
+                    minStartIndex,
+                    maxStartIndex,
+                    minEndIndex,
+                    maxEndIndex);
         }
     }
 

@@ -8,9 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xiaoguan.train.business.domain.ConfirmOrder;
-import com.xiaoguan.train.business.domain.ConfirmOrderExample;
-import com.xiaoguan.train.business.domain.DailyTrainTicket;
+import com.xiaoguan.train.business.domain.*;
 import com.xiaoguan.train.business.enums.ConfirmOrderStatusEnum;
 import com.xiaoguan.train.business.enums.SeatColEnum;
 import com.xiaoguan.train.business.enums.SeatTypeEnum;
@@ -43,6 +41,12 @@ public class ConfirmOrderService {
 
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
 
     public void save(ConfirmOrderDoReq req) {
         DateTime now = DateTime.now();
@@ -148,9 +152,19 @@ public class ConfirmOrderService {
                 offsetList.add(offset - absoluteOffsetList.get(0));
             }
             LOG.info("计算得到所有座位与第一个座位的相对偏移值：{}", offsetList);
+
+            getSeat(
+                    date,
+                    trainCode,
+                    ticketReq0.getSeatTypeCode(),
+                    ticketReq0.getSeat().split("")[0],//从A1得到A
+                    offsetList
+            );
         }else{
             LOG.info("本次购票没有选座");
-
+            for (ConfirmOrderTicketReq ticket : tickets) {
+                getSeat(date, trainCode, ticket.getSeatTypeCode(), null, null);
+            }
         }
         //选座
 
@@ -164,6 +178,18 @@ public class ConfirmOrderService {
             //修改余票详情表余票
             //为会员增加购票记录
             //更新确认订单为成功
+    }
+
+    private void getSeat(Date date, String trainCode, String seatType, String column, List<Integer> offsetList){
+        List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectByTrainCode(date, trainCode, seatType);
+        LOG.info("共查出{}个符合条件的车厢", carriageList.size());
+
+        //一个车厢一个车厢的获取座位数据
+        for (DailyTrainCarriage carriage : carriageList) {
+            LOG.info("开始从车厢{}选座", carriage.getIndex());
+            List<DailyTrainSeat> carriageSeatList = dailyTrainSeatService.selectByCarriage(date, trainCode, carriage.getIndex());
+            LOG.info("车厢{}的座位数: {}", carriage.getIndex(), carriageSeatList.size());
+        }
     }
 
     private void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {

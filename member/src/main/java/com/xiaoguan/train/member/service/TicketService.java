@@ -2,6 +2,7 @@ package com.xiaoguan.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.ObjUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xiaoguan.train.common.req.MemberTicketReq;
@@ -27,24 +28,23 @@ public class TicketService {
     @Resource
     private TicketMapper ticketMapper;
 
-    public void save(MemberTicketReq req) throws Exception {
-        // LOG.info("seata全局事务ID save: {}", RootContext.getXID());
+    public void save(MemberTicketReq req) {
         DateTime now = DateTime.now();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
         ticket.setId(SnowUtil.getSnowflakeNextId());
         ticket.setCreateTime(now);
         ticket.setUpdateTime(now);
         ticketMapper.insert(ticket);
-        // 模拟被调用方出现异常
-        // if (1 == 1) {
-        //     throw new Exception("测试异常11");
-        // }
+
     }
 
     public PageResp<TicketQueryResp> queryList(TicketQueryReq req) {
         TicketExample ticketExample = new TicketExample();
         ticketExample.setOrderByClause("id desc");
         TicketExample.Criteria criteria = ticketExample.createCriteria();
+        if (ObjUtil.isNotNull(req.getMemberId())) {
+            criteria.andMemberIdEqualTo(req.getMemberId());
+        }
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());

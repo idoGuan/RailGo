@@ -93,7 +93,7 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public void doConfirm(ConfirmOrderDoReq req) {
+    public void doConfirm(ConfirmOrderDoReq req){
         //省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，ticket条数>0，同乘客同车次是否已经买过
 
         //保存确认订单，状态初始
@@ -186,7 +186,7 @@ public class ConfirmOrderService {
 
         LOG.info("最终的选座：{}", finalSeatList);
 
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList);
+
 
         // 选中座位后事务处理:
 
@@ -194,6 +194,12 @@ public class ConfirmOrderService {
             //修改余票详情表余票
             //为会员增加购票记录
             //更新确认订单为成功
+        try {
+            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+        } catch (Exception e) {
+            LOG.error("保存购票信息失败", e);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
+        }
     }
 
     private void getSeat(List<DailyTrainSeat> finalSeatList,

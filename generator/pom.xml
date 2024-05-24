@@ -66,8 +66,8 @@
                 <version>1.4.0</version>
                 <configuration>
 <!--                    生成器配套的配置文件，里面定义了需要连接哪个数据库，生成哪张表，生成到哪里-->
-<!--                    <configurationFile>src/main/resources/generator-config-member.xml</configurationFile>-->
-                    <configurationFile>src/main/resources/generator-config-business.xml</configurationFile>
+                    <configurationFile>src/main/resources/generator-config-member.xml</configurationFile>
+<!--                    <configurationFile>src/main/resources/generator-config-business.xml</configurationFile>-->
 <!--                    <configurationFile>src/main/resources/generator-config-batch.xml</configurationFile>-->
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>

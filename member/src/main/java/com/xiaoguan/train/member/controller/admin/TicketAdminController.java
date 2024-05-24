@@ -1,16 +1,13 @@
 package com.xiaoguan.train.member.controller.admin;
 
-import com.xiaoguan.train.common.context.LoginMemberContext;
+import com.xiaoguan.train.common.req.MemberTicketReq;
 import com.xiaoguan.train.common.resp.CommonResp;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.member.req.TicketQueryReq;
-import com.xiaoguan.train.member.req.TicketSaveReq;
 import com.xiaoguan.train.member.resp.TicketQueryResp;
 import com.xiaoguan.train.member.service.TicketService;
 import jakarta.annotation.Resource;
-import jakarta.validation.Configuration;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -30,7 +27,7 @@ public class TicketAdminController {
     private TicketService ticketService;
 
     @PostMapping("/save")
-    public CommonResp<Object> save(@Valid @RequestBody TicketSaveReq req){
+    public CommonResp<Object> save(@Valid @RequestBody MemberTicketReq req) throws Exception {
         ticketService.save(req);
         return new CommonResp<>();
     }

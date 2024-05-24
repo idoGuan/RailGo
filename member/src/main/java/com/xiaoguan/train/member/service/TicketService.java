@@ -2,16 +2,15 @@ package com.xiaoguan.train.member.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.xiaoguan.train.common.req.MemberTicketReq;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.common.util.SnowUtil;
 import com.xiaoguan.train.member.domain.Ticket;
 import com.xiaoguan.train.member.domain.TicketExample;
 import com.xiaoguan.train.member.mapper.TicketMapper;
 import com.xiaoguan.train.member.req.TicketQueryReq;
-import com.xiaoguan.train.member.req.TicketSaveReq;
 import com.xiaoguan.train.member.resp.TicketQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -28,18 +27,18 @@ public class TicketService {
     @Resource
     private TicketMapper ticketMapper;
 
-    public void save(TicketSaveReq req) {
+    public void save(MemberTicketReq req) throws Exception {
+        // LOG.info("seata全局事务ID save: {}", RootContext.getXID());
         DateTime now = DateTime.now();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
-        if (ObjectUtil.isNull(ticket.getId())) {
-            ticket.setId(SnowUtil.getSnowflakeNextId());
-            ticket.setCreateTime(now);
-            ticket.setUpdateTime(now);
-            ticketMapper.insert(ticket);
-        } else {
-            ticket.setUpdateTime(now);
-            ticketMapper.updateByPrimaryKey(ticket);
-        }
+        ticket.setId(SnowUtil.getSnowflakeNextId());
+        ticket.setCreateTime(now);
+        ticket.setUpdateTime(now);
+        ticketMapper.insert(ticket);
+        // 模拟被调用方出现异常
+        // if (1 == 1) {
+        //     throw new Exception("测试异常11");
+        // }
     }
 
     public PageResp<TicketQueryResp> queryList(TicketQueryReq req) {

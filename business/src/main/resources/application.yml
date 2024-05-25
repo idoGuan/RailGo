@@ -10,6 +10,18 @@ spring:
     username: train_business
     password: abc123
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: r-uf6ljbcdaxobsifyctpd.redis.rds.aliyuncs.com
+      port: 6379
+      password: Redis000
+  cache:
+    type: redis
+    redis:
+      use-key-prefix: true
+      key-prefix: train_cache_
+      cache-null-values: false
+      time-to-live: 5s
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   configuration:

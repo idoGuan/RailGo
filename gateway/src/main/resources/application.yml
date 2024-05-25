@@ -18,11 +18,13 @@ spring:
           predicates:
             - Path=/member/**
         - id: business
-          uri: http://127.0.0.1:8002
+#          uri: http://127.0.0.1:8002
+          uri: lb://business
           predicates:
             - Path=/business/**
         - id: batch
-          uri: http://127.0.0.1:8003
+#          uri: http://127.0.0.1:8003
+          uri: lb://batch
           predicates:
             - Path=/batch/**
 

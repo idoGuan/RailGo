@@ -12,3 +12,11 @@ spring:
         namespace: train #命名空间ID，而不是命名空间名
   application:
     name: business #注册中心的名字
+#也可不做配置，这三个配置项都有默认值
+seata:
+  tx-service-group: train-group #事务组名称（一个项目的多个模块，配置成同一个事务组）
+  service:
+    vgroup-mapping:
+      train-group: default #事务组和seata集群做关联
+    grouplist:
+      default: 127.0.0.1:8091 #seata集群对应的机器

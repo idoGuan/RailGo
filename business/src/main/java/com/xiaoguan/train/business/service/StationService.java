@@ -70,7 +70,7 @@ public class StationService {
 
     public List<StationQueryResp> queryAll() {
         StationExample stationExample = new StationExample();
-        stationExample.setOrderByClause("code asc");
+        stationExample.setOrderByClause("id asc");
         List<Station> stationList = stationMapper.selectByExample(stationExample);
         return BeanUtil.copyToList(stationList, StationQueryResp.class);
     }

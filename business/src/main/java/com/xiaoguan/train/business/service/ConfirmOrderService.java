@@ -25,11 +25,10 @@ import com.xiaoguan.train.common.exception.BusinessExceptionEnum;
 import com.xiaoguan.train.common.resp.PageResp;
 import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -57,10 +56,10 @@ public class ConfirmOrderService {
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
 
-//    @Autowired
-//    private StringRedisTemplate redisTemplate;
     @Autowired
-    private RedissonClient redissonClient;
+    private StringRedisTemplate redisTemplate;
+//    @Autowired
+//    private RedissonClient redissonClient;
 
     public void save(ConfirmOrderDoReq req) {
         DateTime now = DateTime.now();
@@ -105,39 +104,39 @@ public class ConfirmOrderService {
     public void doConfirm(ConfirmOrderDoReq req){
         String lockKey = req.getDate() + "-" + req.getTrainCode();
 
-//        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-//
-//        if(setIfAbsent){
-//            LOG.info("恭喜，抢票成功");
-//        }else{
-//            //只是没抢到锁，并不知道票买完了没，所以提示稍后重试
-//            LOG.info("很遗憾，没抢到锁");
-//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_ERROR);
-//        }
-        RLock lock = null;
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+
+        if(setIfAbsent){
+            LOG.info("恭喜，抢票成功");
+        }else{
+            //只是没抢到锁，并不知道票买完了没，所以提示稍后重试
+            LOG.info("很遗憾，没抢到锁");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
+//        RLock lock = null;
         try {
             //使用redisson，自带看门狗
-            lock = redissonClient.getLock(lockKey);
+//            lock = redissonClient.getLock(lockKey);
              /**
                waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
                leaseTime – lease time 锁时长，即n秒后自动释放锁
                time unit – time unit 时间单位
               */
              // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
-             boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
-             if (tryLock) {
-                 LOG.info("恭喜，抢到锁了！");
-                 // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
-                 // for (int i = 0; i < 30; i++) {
-                 //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
-                 //     LOG.info("锁过期时间还有：{}", expire);
-                 //     Thread.sleep(1000);
-                 // }
-             } else {
-                 // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
-                 LOG.info("很遗憾，没抢到锁");
-                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-             }
+//             boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
+//             if (tryLock) {
+//                 LOG.info("恭喜，抢到锁了！");
+//                 // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
+//                 // for (int i = 0; i < 30; i++) {
+//                 //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
+//                 //     LOG.info("锁过期时间还有：{}", expire);
+//                 //     Thread.sleep(1000);
+//                 // }
+//             } else {
+//                 // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
+//                 LOG.info("很遗憾，没抢到锁");
+//                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//             }
 
             //省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，ticket条数>0，同乘客同车次是否已经买过
 
@@ -244,13 +243,14 @@ public class ConfirmOrderService {
                 LOG.error("保存购票信息失败", e);
                 throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
             }
-        } catch (InterruptedException e) {
-            LOG.error("购票异常", e);
+//        } catch (InterruptedException e) {
+//            LOG.error("购票异常", e);
         } finally {
-            LOG.info("购票流程结束，释放锁！");
-            if(null != lock && lock.isHeldByCurrentThread()){
-                lock.unlock();
-            }
+            LOG.info("购票流程结束，释放锁！lockKey:{}", lockKey);
+            redisTemplate.delete(lockKey);
+//            if(null != lock && lock.isHeldByCurrentThread()){
+//                lock.unlock();
+//            }
         }
 
     }

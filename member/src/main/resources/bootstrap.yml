@@ -29,7 +29,6 @@ seata:
       group: SEATA_GROUP
       username: nacos
       password: nacos
-      context-path:
       data-id: seataServer.properties
   # seata注册中心，要和seata server的application.yml配置保持一致
   registry:
@@ -39,7 +38,6 @@ seata:
       server-addr: 127.0.0.1:8848
       group: SEATA_GROUP
       namespace: train
-      cluster: default
       username: nacos
       password: nacos
 # 事务组名称，必须在nacos中有配置过：service.vgroupMapping.train-group=default

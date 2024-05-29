@@ -121,19 +121,23 @@ public class DailyTrainSeatService {
     }
 
     //查询座位数目的方法
-    public int countSeat(Date date, String trainCode, String seatType){
-        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
-        criteria.andTrainCodeEqualTo(trainCode).andDateEqualTo(date).andSeatTypeEqualTo(seatType);
+    public int countSeat(Date date, String trainCode) {
+        return countSeat(date, trainCode, null);
+    }
 
-        long count = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
-
-        //如果该列车没有某种座位类型，就返回-1，这样前端可以针对这样的特殊值进行处理
-        if(count == 0L){
+    public int countSeat(Date date, String trainCode, String seatType) {
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        DailyTrainSeatExample.Criteria criteria = example.createCriteria();
+        criteria.andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode);
+        if (StrUtil.isNotBlank(seatType)) {
+            criteria.andSeatTypeEqualTo(seatType);
+        }
+        long l = dailyTrainSeatMapper.countByExample(example);
+        if (l == 0L) {
             return -1;
         }
-
-        return (int)count;
+        return (int) l;
     }
 
     public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex){

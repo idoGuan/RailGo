@@ -22,9 +22,9 @@ public class ServerGenerator {
 
     static String module = "";
 
-    static {
-        new File(serverPath).mkdirs();
-    }
+//    static {
+//        new File(serverPath).mkdirs();
+//    }
 
     public static void main(String[] args) throws Exception {
 

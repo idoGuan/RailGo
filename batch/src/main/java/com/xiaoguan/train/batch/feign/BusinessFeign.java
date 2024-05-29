@@ -17,7 +17,7 @@ import java.util.Date;
  * @Create 2024/5/22 21:50
  * @Version 1.0
  */
-@FeignClient(name = "business")
+@FeignClient(value = "business", fallback = BusinessFeignFallback.class)
 public interface BusinessFeign {
     @GetMapping("/business/hello")
     String hello();

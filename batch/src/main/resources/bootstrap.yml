@@ -10,5 +10,23 @@ spring:
       config:
         file-extension: properties #配置中心文件后缀，默认properties
         namespace: train #命名空间ID，而不是命名空间名
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: localhost:8080
+      datasource:
+        degrade:
+          nacos:
+            server-addr: localhost:8848
+            namespace: train
+            group-id: DEFAULT_GROUP
+            data-id: sentinel-batch-degrade
+            rule-type: degrade
+    openfeign:
+      lazy-attributes-resolution: true
   application:
     name: batch #注册中心的名字
+
+feign:
+  sentinel:
+    enabled: true #sentinel默认不监控feign需改成true，在簇点链路界面会显示资源

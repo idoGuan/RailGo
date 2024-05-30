@@ -3,6 +3,7 @@ package com.xiaoguan.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xiaoguan.train.business.domain.*;
 import com.xiaoguan.train.business.enums.ConfirmOrderStatusEnum;
+import com.xiaoguan.train.business.enums.RedisKeyPreEnum;
 import com.xiaoguan.train.business.enums.SeatColEnum;
 import com.xiaoguan.train.business.enums.SeatTypeEnum;
 import com.xiaoguan.train.business.mapper.ConfirmOrderMapper;
@@ -119,7 +121,7 @@ public class ConfirmOrderService {
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
         }
         //购票
-        String lockKey = req.getDate() + "-" + req.getTrainCode();
+        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
 
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
 

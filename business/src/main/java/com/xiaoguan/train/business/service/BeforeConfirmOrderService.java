@@ -3,15 +3,19 @@ package com.xiaoguan.train.business.service;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.fastjson.JSON;
 import com.xiaoguan.train.business.enums.RedisKeyPreEnum;
+import com.xiaoguan.train.business.enums.RocketMQTopicEnum;
 import com.xiaoguan.train.business.req.ConfirmOrderDoReq;
 import com.xiaoguan.train.common.exception.BusinessException;
 import com.xiaoguan.train.common.exception.BusinessExceptionEnum;
 import jakarta.annotation.Resource;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @Create 2024/5/30 14:47
  * @Version 1.0
  */
+@Service
 public class BeforeConfirmOrderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeforeConfirmOrderService.class);
@@ -33,6 +38,9 @@ public class BeforeConfirmOrderService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
 
     @SentinelResource(value = "beforeDoConfirm", blockHandler = "beforeDoConfirmBlock")
@@ -59,6 +67,12 @@ public class BeforeConfirmOrderService {
             LOG.info("很遗憾，没抢到锁");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
         }
+
+        //发送MQ排队购票
+        String reqJson = JSON.toJSONString(req);
+        LOG.info("排队购票，发送MQ开始，消息：{}", reqJson);
+        rocketMQTemplate.convertAndSend(RocketMQTopicEnum.CONFIRM_ORDER.getCode(), reqJson);
+        LOG.info("排队购票，发送MQ结束");
     }
 
     /**

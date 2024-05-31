@@ -129,8 +129,13 @@ public class ConfirmOrderService {
             LOG.info("恭喜，抢票成功");
         }else{
             //只是没抢到锁，并不知道票买完了没，所以提示稍后重试
-            LOG.info("很遗憾，没抢到锁");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//            LOG.info("很遗憾，没抢到锁");
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+
+            //因为当线程走到抢票逻辑的时候，说明订单信息已经被保存到数据库中
+            //不管哪个线程抢到了锁，都会去数据库中查询所有该车次的订单信息并且完成下单操作
+            LOG.info("没抢到锁，有其它消费线程正在出票，不做任何处理");
+            return;
         }
 //        RLock lock = null;
         try {
@@ -176,7 +181,19 @@ public class ConfirmOrderService {
                 }
 
                 // 一条一条的卖
-                list.forEach(this::sell);
+                list.forEach(confirmOrder -> {
+                    try {
+                        sell(confirmOrder);
+                    } catch (BusinessException e) {
+                        if (e.getE().equals(BusinessExceptionEnum.CONFIRM_ORDER_TICKET_COUNT_ERROR)) {
+                            LOG.info("本订单余票不足，继续售卖下一个订单");
+                            confirmOrder.setStatus(ConfirmOrderStatusEnum.EMPTY.getCode());
+                            updateStatus(confirmOrder);
+                        } else {
+                            throw e;
+                        }
+                    }
+                });
             }
 //        } catch (InterruptedException e) {
 //            LOG.error("购票异常", e);

@@ -12,9 +12,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: r-uf6ljbcdaxobsifyctpd.redis.rds.aliyuncs.com
+      host: 127.0.0.1
       port: 6379
-      password: Redis000
+      password: abc123
   cache:
     type: redis
     redis:

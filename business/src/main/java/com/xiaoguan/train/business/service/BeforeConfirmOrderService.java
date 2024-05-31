@@ -1,23 +1,27 @@
 package com.xiaoguan.train.business.service;
 
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.DateTime;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.fastjson.JSON;
-import com.xiaoguan.train.business.enums.RedisKeyPreEnum;
+import com.xiaoguan.train.business.domain.ConfirmOrder;
+import com.xiaoguan.train.business.enums.ConfirmOrderStatusEnum;
 import com.xiaoguan.train.business.enums.RocketMQTopicEnum;
+import com.xiaoguan.train.business.mapper.ConfirmOrderMapper;
 import com.xiaoguan.train.business.req.ConfirmOrderDoReq;
+import com.xiaoguan.train.business.req.ConfirmOrderTicketReq;
+import com.xiaoguan.train.common.context.LoginMemberContext;
 import com.xiaoguan.train.common.exception.BusinessException;
 import com.xiaoguan.train.common.exception.BusinessExceptionEnum;
+import com.xiaoguan.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
+import java.util.List;
 
 /**
  * ClassName: BeforeOrderService
@@ -36,16 +40,15 @@ public class BeforeConfirmOrderService {
     @Resource
     private SkTokenService skTokenService;
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     @Resource
     private RocketMQTemplate rocketMQTemplate;
 
+    @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
 
     @SentinelResource(value = "beforeDoConfirm", blockHandler = "beforeDoConfirmBlock")
     public void beforeDoConfirm(ConfirmOrderDoReq req){
-
+        req.setMemberId(LoginMemberContext.getId());
         //校验令牌余量
         boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), req.getMemberId());
         if(validSkToken){
@@ -55,18 +58,27 @@ public class BeforeConfirmOrderService {
             LOG.info("令牌校验不通过");
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
         }
-        //购票
-        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
 
-        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        DateTime now = DateTime.now();
+        List<ConfirmOrderTicketReq> tickets = req.getTickets();
 
-        if(setIfAbsent){
-            LOG.info("恭喜，抢票成功");
-        }else{
-            //只是没抢到锁，并不知道票买完了没，所以提示稍后重试
-            LOG.info("很遗憾，没抢到锁");
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-        }
+        ConfirmOrder confirmOrder = new ConfirmOrder();
+        confirmOrder.setId(SnowUtil.getSnowflakeNextId());
+        confirmOrder.setMemberId(req.getMemberId());
+        Date date = req.getDate();
+        String trainCode = req.getTrainCode();
+        String start = req.getStart();
+        String end = req.getEnd();
+        confirmOrder.setDate(date);
+        confirmOrder.setTrainCode(trainCode);
+        confirmOrder.setStart(start);
+        confirmOrder.setEnd(end);
+        confirmOrder.setDailyTrainTicketId(req.getDailyTrainTicketId());
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
+        confirmOrder.setCreateTime(now);
+        confirmOrder.setUpdateTime(now);
+        confirmOrder.setTickets(JSON.toJSONString(tickets));
+        confirmOrderMapper.insert(confirmOrder);
 
         //发送MQ排队购票
         String reqJson = JSON.toJSONString(req);

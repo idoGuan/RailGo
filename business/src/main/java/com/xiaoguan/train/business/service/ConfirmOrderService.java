@@ -190,6 +190,17 @@ public class ConfirmOrderService {
 
     }
 
+    /**
+     * 更新状态
+     */
+    public void updateStatus(ConfirmOrder confirmOrder){
+        ConfirmOrder confirmOrderForUpdate = new ConfirmOrder();
+        confirmOrderForUpdate.setId(confirmOrder.getId());
+        confirmOrderForUpdate.setUpdateTime(new Date());
+        confirmOrderForUpdate.setStatus(confirmOrder.getStatus());
+        confirmOrderMapper.updateByPrimaryKey(confirmOrderForUpdate);
+    }
+
     private void sell(ConfirmOrder confirmOrder) {
         // 构造ConfirmOrderDoReq
         ConfirmOrderDoReq req = new ConfirmOrderDoReq();
@@ -205,7 +216,12 @@ public class ConfirmOrderService {
         req.setLogId("");
         //省略业务数据校验，如：车次是否存在，余票是否存在，车次是否在有效期内，ticket条数>0，同乘客同车次是否已经买过
 
-        //保存确认订单，状态初始
+        //将订单设置成处理中，避免重复处理
+        LOG.info("将确认订单更新成处理中，避免重复处理，confirmOrder.id：{}", confirmOrder.getId());
+        confirmOrder.setStatus(ConfirmOrderStatusEnum.PENDING.getCode());
+        updateStatus(confirmOrder);
+
+
         DateTime now = DateTime.now();
         List<ConfirmOrderTicketReq> tickets = req.getTickets();
         String trainCode = req.getTrainCode();
